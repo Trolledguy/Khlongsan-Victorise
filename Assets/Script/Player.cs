@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 using TMPro;
-
+using System;
 
 public class Player : MonoBehaviour
 {
@@ -19,8 +19,10 @@ public class Player : MonoBehaviour
 
     //Comp For Debug
 
+    private void Start()
+    {
 
-    public TMP_Text debugMouseScroll;
+    }
 
 
     private void Update()
@@ -58,15 +60,38 @@ public class Player : MonoBehaviour
 
     public void OpenInventory() 
     {
+        MouseLookAround mouseMove = cam.GetComponent<MouseLookAround>();
         if (inventory.gameObject.active != true)
         {
             inventory.gameObject.SetActive(true);
+            mouseMove.enabled = false;
+            foreach(GameObject item in inventory.items) 
+            {
+                
+                try 
+                {
+                    item.SetActive(true);
+                } catch (UnassignedReferenceException) { return; }
+                
+            }
         }
         else 
         {
             inventory.gameObject.SetActive(false);
+            mouseMove.enabled = true;
+            foreach (GameObject item in inventory.items)
+            {
+                
+                try
+                {
+                    item.SetActive(false);
+                }
+                catch (UnassignedReferenceException) { return; }
+
+            }
         }
     }
+
 
 
     private void MoveCam() 
@@ -74,6 +99,7 @@ public class Player : MonoBehaviour
         cam.transform.position = camPos.transform.position;
 
     }
+
 
    
 }

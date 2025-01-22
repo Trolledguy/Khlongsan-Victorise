@@ -9,13 +9,16 @@ using UnityEngine;
 public class Inventory : MonoBehaviour
 {
     [SerializeField] //บังคับให้ Unity ส่ง Private Property เข้าไปแสดงผลใน inspecter
-    private GameObject[] items = new GameObject[9]; 
+    public GameObject[] items;
+    public GameObject[] slotPos = new GameObject[9];
+    
 
-    //Only Apply Name Like (00_ObjectName)
-    public GameObject[] allItems;
+    public GameManager gameManager;
+
 
     private void Start()
     {
+        
         this.gameObject.SetActive(false);
     }
 
@@ -30,21 +33,26 @@ public class Inventory : MonoBehaviour
         for (int slot = 0; slot < items.Length; slot++)
         {
             //Slot Check
-            if (items[slot] == null) 
+            if (items[slot] == null)
             {
                 //Check Item Exist
-                for (int itemInfoCheck = 0;itemInfoCheck < allItems.Length;itemInfoCheck++) 
+                for (int itemInfoCheck = 0; itemInfoCheck < gameManager.allItems.Length; itemInfoCheck++)
                 {
-                    if (pickUpItem.gameObject.name == allItems[itemInfoCheck].gameObject.name) 
+                    if (pickUpItem.gameObject.name == gameManager.allItems[itemInfoCheck].gameObject.name)
                     {
                         //Posess Info
-                        items[slot] = pickUpItem.gameObject; 
-                        pickUpItem.gameObject.SetActive(false);
+                        pickUpItem.slotPos = slot;
+                        items[slot] = pickUpItem.gameObject;
                         return;
                     }
+
                 }
             }
-            else if (slot >= items.Length) 
+            else if (items[slot] != null) 
+            { 
+                
+            }
+            else
             {
                 //Full
                 Debug.Log("Inventory Full");
@@ -54,14 +62,19 @@ public class Inventory : MonoBehaviour
     }
 
 
-    public void DropItem() 
+    public void DropItem(GameObject dropedItem ,int slot) 
+    {
+        dropedItem = items[slot].GetComponent<GameObject>();
+        items[slot] = null;
+        dropedItem.isInUI = false;
+        dropedItem.transform.position = slotPos[slot].transform.position + new Vector3 (0, 0, 1);
+        dropedItem.transform.localScale = Vector3.one;
+        dropedItem.gameObject.SetActive(true);
+    }
+    public void UseItem()
     {
         
     }
 
-    public void Sort() 
-    { 
-        
-    }
 
 }
