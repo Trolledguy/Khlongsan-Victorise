@@ -9,7 +9,7 @@ using UnityEngine;
 public class Inventory : MonoBehaviour
 {
     [SerializeField] //บังคับให้ Unity ส่ง Private Property เข้าไปแสดงผลใน inspecter
-    public GameObject[] items;
+    public Pickable[] items;
     public GameObject[] slotPos = new GameObject[9];
     
 
@@ -18,7 +18,6 @@ public class Inventory : MonoBehaviour
 
     private void Start()
     {
-        
         this.gameObject.SetActive(false);
     }
 
@@ -41,8 +40,10 @@ public class Inventory : MonoBehaviour
                     if (pickUpItem.gameObject.name == gameManager.allItems[itemInfoCheck].gameObject.name)
                     {
                         //Posess Info
-                        pickUpItem.slotPos = slot;
-                        items[slot] = pickUpItem.gameObject;
+                        pickUpItem.rigi.isKinematic = true;
+                        pickUpItem.thisSlotPos = slot;
+                        pickUpItem.isInUI = true;
+                        items[slot] = pickUpItem;
                         return;
                     }
 
@@ -62,19 +63,32 @@ public class Inventory : MonoBehaviour
     }
 
 
-    public void DropItem(GameObject dropedItem ,int slot) 
+    public void DropItem(int slot) 
     {
-        dropedItem = items[slot].GetComponent<GameObject>();
+        
+        try
+        {
+            Collider itemCollider = items[slot].GetComponent<Collider>();
+            itemCollider.enabled = true;
+            items[slot].isInUI = false;
+            items[slot].transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+        }
+        catch (MissingReferenceException) { items[slot] = null; return; }
+        catch (NullReferenceException) { return; }
+
+        
+        items[slot].transform.position = slotPos[slot].transform.position;
+        items[slot].rigi.isKinematic = false;
+        items[slot].gameObject.SetActive(true);
         items[slot] = null;
-        dropedItem.isInUI = false;
-        dropedItem.transform.position = slotPos[slot].transform.position + new Vector3 (0, 0, 1);
-        dropedItem.transform.localScale = Vector3.one;
-        dropedItem.gameObject.SetActive(true);
     }
+
+
     public void UseItem()
     {
         
     }
+
 
 
 }

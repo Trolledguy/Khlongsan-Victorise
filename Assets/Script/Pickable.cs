@@ -22,7 +22,7 @@ using UnityEngine;
 public class Pickable : MonoBehaviour
 {
     public bool isInUI;
-    public int slotPos;
+    public int thisSlotPos;
 
     public Player player;
 
@@ -51,9 +51,8 @@ public class Pickable : MonoBehaviour
         if (isInUI) 
         {
             this.transform.localScale = new Vector3(0.05f,0.05f,0.05f);
-            this.transform.position = player.inventory.slotPos[slotPos].transform.position;
+            this.transform.position = player.inventory.slotPos[thisSlotPos].transform.position;
             this.transform.LookAt(player.camPos);
-
         }
     }
 
@@ -65,9 +64,11 @@ public class Pickable : MonoBehaviour
 
             if (Input.GetButtonDown("Pickup")) 
             {
+                Collider collider = this.GetComponent<Collider>();
                 player.inventory.PickUp(this);
+                collider.enabled = false;
                 this.gameObject.SetActive(false);
-                isInUI = true;
+                
             }
         }
     }
@@ -88,7 +89,7 @@ public class Pickable : MonoBehaviour
     {
         if (!isInUI) 
         {
-            pickupText.transform.LookAt(player.transform.position);
+            pickupText.transform.LookAt(player.cam.transform.position);
         }
         
     }

@@ -65,28 +65,33 @@ public class Player : MonoBehaviour
         {
             inventory.gameObject.SetActive(true);
             mouseMove.enabled = false;
-            foreach(GameObject item in inventory.items) 
+            foreach(Pickable item in inventory.items) 
             {
                 
                 try 
                 {
-                    item.SetActive(true);
-                } catch (UnassignedReferenceException) { return; }
-                
+                    item.gameObject.SetActive(true);
+                }
+                catch (MissingReferenceException) { return; }
+                catch (UnassignedReferenceException) { return; }
+                catch (NullReferenceException) { return; }
+
             }
         }
         else 
         {
             inventory.gameObject.SetActive(false);
             mouseMove.enabled = true;
-            foreach (GameObject item in inventory.items)
+            foreach (Pickable item in inventory.items)
             {
-                
+
                 try
                 {
-                    item.SetActive(false);
+                    item.gameObject.SetActive(false);
                 }
+                catch (MissingReferenceException) { return; }
                 catch (UnassignedReferenceException) { return; }
+                catch (NullReferenceException) { return; }
 
             }
         }
